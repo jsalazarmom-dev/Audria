@@ -506,7 +506,7 @@
     if(lower === 'audria'){
       playWrong();
       // Updated message per request:
-      const audMsg = "how dare you think you are that important";
+      const audMsg = "How dare you think you are that important?";
       zurgError.textContent = `Zurg: '${audMsg}'`;
       prependLogEntry('Grunt attempt: "audria" — mocked celebration', new Date());
       zurgInput.focus();
@@ -563,7 +563,7 @@
         prependLogEntry(`Grunt said "sorry" — +${SORRY_BONUS}s (usage ${sorryCount}/${SORRY_MAX_BONUSES})`, new Date());
         startCountdown();
       } else if(sorryCount === SORRY_MAX_BONUSES + 1){
-        // Third time: warn they will be locked out for 10 minutes (but do not enforce)
+        // Third time: warn they will be locked out for 10 minutes
         zurgError.textContent = `Warning: next attempt will lock you out for 10 minutes.`;
         prependLogEntry(`Grunt reached sorry warning threshold — lockout warning shown (10 min)`, new Date());
       } else {
@@ -652,3 +652,4 @@
 </script>
 </body>
 </html>
+
