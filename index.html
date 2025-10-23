@@ -428,8 +428,8 @@
     prependLogEntry('Deactivation sound ended — blue self-destruction state engaged', new Date());
   });
 
-  // ---- New: please counter logic ----
-  // Allow +30s twice. On third "please", show Don't get greedy! You just lost 45 seconds! and subtract ~45s.
+  // ---- please counter logic ----
+  // Allow +30s twice. On third "please", show "Don't be greedy, now you lost 45 seconds."
   let pleaseCount = 0;
   const PLEASE_MAX = 2;
   const PLEASE_BONUS = 30; // seconds added for allowed pleas
@@ -497,7 +497,9 @@
     const lower = p;
     if(lower === 'audria'){
       playWrong();
-      zurgError.textContent = Zurg: How dare you think you are that important;
+      // Updated message per request:
+      const audMsg = "how dare you think you are that important";
+      zurgError.textContent = `Zurg: '${audMsg}'`;
       prependLogEntry('Grunt attempt: "audria" — mocked celebration', new Date());
       zurgInput.focus();
       zurgInput.select();
@@ -528,13 +530,13 @@
       if(pleaseCount < PLEASE_MAX){
         pleaseCount += 1;
         totalSeconds += PLEASE_BONUS;
-        zurgError.textContent = Since you asked nicley here 30 seconds +${PLEASE_BONUS}s.'`;
+        zurgError.textContent = `Zurg amused: 'You beg? +${PLEASE_BONUS}s.'`;
         prependLogEntry(`Grunt attempted "please" — +${PLEASE_BONUS}s (usage ${pleaseCount}/${PLEASE_MAX})`, new Date());
         startCountdown();
       } else {
-        // Greedy response: deduct ~45s and message
+        // Greedy response: deduct ~45s and message per request
         totalSeconds = Math.max(0, totalSeconds - PLEASE_PENALTY);
-        zurgError.textContent = "Zurg scowls: 'Don't get greedy.'";
+        zurgError.textContent = "Don't be greedy, now you lost 45 seconds.";
         prependLogEntry(`Grunt got greedy — -${PLEASE_PENALTY}s penalty applied`, new Date());
         startCountdown();
       }
