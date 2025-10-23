@@ -435,6 +435,14 @@
   const PLEASE_BONUS = 30; // seconds added for allowed pleas
   const PLEASE_PENALTY = 45; // seconds deducted when greedy
 
+  // ---- sorry counter logic ----
+  // "sorry" adds +44s twice. Third time shows a warning that they'll be locked out for 10 minutes.
+  // Fourth+ attempts only show the lockout attempt message but do NOT actually change time.
+  let sorryCount = 0;
+  const SORRY_MAX_BONUSES = 2;
+  const SORRY_BONUS = 44; // seconds
+  const SORRY_LOCKOUT_NOTICE = 10 * 60; // 10 minutes in seconds (only for display/warning, not applied)
+
   // Unified Zurg auth handler - unlimited attempts allowed
   function openZurgPopup(){
     zurgError.textContent = '';
@@ -524,7 +532,7 @@
       return;
     }
 
-    // NEW: "please" handling with limited bonuses then penalty
+    // "please" handling with limited bonuses then penalty
     if(lower === 'please' || lower === 'plase'){
       playWrong();
       if(pleaseCount < PLEASE_MAX){
@@ -539,6 +547,29 @@
         zurgError.textContent = "Don't be greedy, now you lost 45 seconds.";
         prependLogEntry(`Grunt got greedy — -${PLEASE_PENALTY}s penalty applied`, new Date());
         startCountdown();
+      }
+      zurgInput.focus();
+      zurgInput.select();
+      return;
+    }
+
+    // "sorry" handling with two bonuses, third shows lockout warning (10 min), fourth+ just shows attempted lockout message
+    if(lower === 'sorry'){
+      playWrong();
+      sorryCount += 1;
+      if(sorryCount <= SORRY_MAX_BONUSES){
+        totalSeconds += SORRY_BONUS;
+        zurgError.textContent = `Zurg accepts your "sorry": +${SORRY_BONUS}s.`;
+        prependLogEntry(`Grunt said "sorry" — +${SORRY_BONUS}s (usage ${sorryCount}/${SORRY_MAX_BONUSES})`, new Date());
+        startCountdown();
+      } else if(sorryCount === SORRY_MAX_BONUSES + 1){
+        // Third time: warn they will be locked out for 10 minutes (but do not enforce)
+        zurgError.textContent = `Warning: next attempt will lock you out for 10 minutes.`;
+        prependLogEntry(`Grunt reached sorry warning threshold — lockout warning shown (10 min)`, new Date());
+      } else {
+        // Fourth or more: show lockout-attempt message but DO NOT change time
+        zurgError.textContent = `Attempting lockout... (no real lockout enforced)`;
+        prependLogEntry(`Grunt attempted lockout after repeated "sorry" entries — no change applied`, new Date());
       }
       zurgInput.focus();
       zurgInput.select();
